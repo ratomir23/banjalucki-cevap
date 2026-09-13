@@ -1,0 +1,39 @@
+name: Apply shared header
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/apply-shared-header.yml']
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply same header to all public pages
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          pages=['index.html','cevapi-beograd/index.html','pljeskavica-beograd/index.html','rostilj-beograd/index.html','ketering-rostilj-beograd/index.html']
+          for name in pages:
+              p=Path(name); s=p.read_text(encoding='utf-8')
+              if '<link rel="stylesheet" href="/shared-header.css">' not in s:
+                  s=s.replace('</head>','<link rel="stylesheet" href="/shared-header.css"></head>',1)
+              # remove each page's old header markup, preserving all page content
+              start=s.find('<body>')+len('<body>')
+              main=s.find('<main>',start)
+              if start < len('<body>') or main < 0: raise SystemExit(f'Could not locate body/main in {name}')
+              between=s[start:main]
+              # Homepage also has mobile nav between header and main; replace whole pre-main area intentionally.
+              if '<header' not in between: raise SystemExit(f'No header found in {name}')
+              s=s[:start]+'<div id="sharedHeader"></div><script src="/shared-header.js"></script>'+s[main:]
+              p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html cevapi-beograd/index.html pljeskavica-beograd/index.html rostilj-beograd/index.html ketering-rostilj-beograd/index.html
+          git diff --cached --check
+          git commit -m "Use fixed hamburger header on every page"
+          git push

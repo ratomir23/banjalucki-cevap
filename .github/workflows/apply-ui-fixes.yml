@@ -1,0 +1,96 @@
+name: Apply UI fixes
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/apply-ui-fixes.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Patch homepage UI safely
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+
+          def rep(old, new, label):
+              global s
+              n = s.count(old)
+              if n != 1:
+                  raise SystemExit(f'{label}: expected 1 match, found {n}')
+              s = s.replace(old, new, 1)
+
+          rep(
+              'header{position:absolute;inset:0 0 auto;z-index:20}',
+              'header{position:fixed;inset:0 0 auto;z-index:70;background:linear-gradient(180deg,#0c0a08e8 0%,#0c0a08b8 70%,transparent 100%);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}',
+              'fixed header'
+          )
+
+          phone_css = '.phone{background:#1b1814cc;border:1px solid #cfb06e;color:#ead8b0;padding:11px 15px;border-radius:999px;font-weight:900;font-size:12px}'
+          menu_css = phone_css + '.hamburger{display:none;width:44px;height:44px;border:1px solid #cfb06e;border-radius:50%;background:#17130fd9;color:#ead8b0;align-items:center;justify-content:center;cursor:pointer}.hamburger span,.hamburger span:before,.hamburger span:after{display:block;width:18px;height:2px;background:currentColor;position:relative;border-radius:2px}.hamburger span:before,.hamburger span:after{content:"";position:absolute;left:0}.hamburger span:before{top:-6px}.hamburger span:after{top:6px}.mobile-menu{display:none;position:fixed;z-index:69;top:62px;left:0;right:0;background:#11100ef7;border-top:1px solid #ffffff12;border-bottom:1px solid #3b3328;padding:12px 15px 18px;box-shadow:0 18px 35px #0008}.mobile-menu.open{display:grid}.mobile-menu a{padding:13px 8px;border-bottom:1px solid #ffffff12;font-weight:800;font-size:13px}.mobile-menu a:last-child{border-bottom:0}'
+          rep(phone_css, menu_css, 'hamburger css')
+
+          old_float_css = '.contact-float{position:fixed;right:18px;bottom:24px;z-index:60;display:flex;flex-direction:column;gap:8px}.contact-float a{min-width:112px;padding:11px 14px;border-radius:999px;font-size:10px;font-weight:900;text-align:center;box-shadow:0 8px 24px #0005}.contact-float .call{background:#e3c07a;color:#17130f}.contact-float .viber{background:#7360f2;color:#fff}.contact-float .wa{background:#25d366;color:#102416}'
+          new_float_css = '.contact-float{position:fixed;right:18px;bottom:24px;z-index:80;display:flex;flex-direction:column;align-items:flex-end;gap:8px}.contact-options{display:grid;gap:8px;opacity:0;transform:translateY(10px) scale(.96);pointer-events:none;transition:opacity .18s ease,transform .18s ease}.contact-float.open .contact-options{opacity:1;transform:none;pointer-events:auto}.contact-options a{min-width:106px;padding:10px 13px;border-radius:999px;font-size:10px;font-weight:900;text-align:center;box-shadow:0 8px 24px #0005}.contact-options .call{background:#e3c07a;color:#17130f}.contact-options .viber{background:#7360f2;color:#fff}.contact-options .wa{background:#25d366;color:#102416}.contact-toggle{width:58px;height:58px;border:0;border-radius:50%;display:grid;place-items:center;background:#e3c07a;color:#17130f;box-shadow:0 10px 28px #0007;cursor:pointer}.contact-toggle svg{width:25px;height:25px}.contact-float.open .contact-toggle{transform:rotate(-8deg)}'
+          rep(old_float_css, new_float_css, 'contact css')
+
+          rep(
+              '.nav nav{display:none}.phone{margin-left:auto;font-size:10px;padding:9px 11px}',
+              '.nav nav{display:none}.phone{margin-left:auto;font-size:10px;padding:9px 11px}.hamburger{display:flex}',
+              'mobile hamburger display'
+          )
+
+          rep(
+              '.contact-float{right:10px;bottom:62px}.contact-float a{min-width:92px;padding:9px 11px;font-size:9px}',
+              '.contact-float{right:14px;bottom:72px}.contact-options a{min-width:92px;padding:9px 11px;font-size:9px}.contact-toggle{width:54px;height:54px}',
+              'mobile contact placement'
+          )
+
+          old_header = '<header><div class="w nav"><img class="logo" src="55806i-200x150.jpg" alt="Banjalučki Ćevap logo"><nav><a href="#zasto">Zašto mi</a><a href="#popularno">Najtraženije</a><a href="#meni">Meni</a><a href="#ketering">Ketering</a><a href="#galerija">Galerija</a><a href="#kontakt">Kontakt</a></nav><a class="phone" href="tel:+381668459602">066 845 9602</a></div></header>'
+          new_header = old_header[:-15] + '<button class="hamburger" id="menuToggle" aria-label="Otvori meni" aria-expanded="false"><span></span></button></div></header><nav class="mobile-menu" id="mobileMenu" aria-label="Mobilna navigacija"><a href="#meni">Meni</a><a href="/cevapi-beograd/">Ćevapi</a><a href="/pljeskavica-beograd/">Pljeskavica</a><a href="/rostilj-beograd/">Roštilj</a><a href="#ketering">Ketering</a><a href="#galerija">Galerija</a><a href="#kontakt">Kontakt</a></nav>'
+          # reconstruct header explicitly to avoid accidental malformed slicing
+          new_header = '<header><div class="w nav"><img class="logo" src="55806i-200x150.jpg" alt="Banjalučki Ćevap logo"><nav><a href="#zasto">Zašto mi</a><a href="#popularno">Najtraženije</a><a href="#meni">Meni</a><a href="#ketering">Ketering</a><a href="#galerija">Galerija</a><a href="#kontakt">Kontakt</a></nav><a class="phone" href="tel:+381668459602">066 845 9602</a><button class="hamburger" id="menuToggle" aria-label="Otvori meni" aria-expanded="false"><span></span></button></div></header><nav class="mobile-menu" id="mobileMenu" aria-label="Mobilna navigacija"><a href="#meni">Meni</a><a href="/cevapi-beograd/">Ćevapi</a><a href="/pljeskavica-beograd/">Pljeskavica</a><a href="/rostilj-beograd/">Roštilj</a><a href="#ketering">Ketering</a><a href="#galerija">Galerija</a><a href="#kontakt">Kontakt</a></nav>'
+          rep(old_header, new_header, 'header markup')
+
+          old_float = '<div class="contact-float" aria-label="Brzi kontakt"><a class="call" href="tel:+381668459602">POZIV</a><a class="viber" href="viber://chat?number=%2B381668459602">VIBER</a><a class="wa" target="_blank" rel="noopener" href="https://wa.me/381668459602">WHATSAPP</a></div>'
+          new_float = '<div class="contact-float" id="contactFloat" aria-label="Brzi kontakt"><div class="contact-options"><a class="call" href="tel:+381668459602">POZIV</a><a class="viber" href="viber://chat?number=%2B381668459602">VIBER</a><a class="wa" target="_blank" rel="noopener" href="https://wa.me/381668459602">WHATSAPP</a></div><button class="contact-toggle" id="contactToggle" aria-label="Otvori kontakt opcije" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.78.62 2.63a2 2 0 0 1-.45 2.11L8 9.73a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.85.29 1.73.5 2.63.62A2 2 0 0 1 22 16.92z"/></svg></button></div>'
+          rep(old_float, new_float, 'contact markup')
+
+          sendvici_card = '<a class="seo-link" href="/sendvici-beograd/"><b>Sendviči Beograd</b><span>Roštilj u somunu: pljeskavica, piletina i ćevapi.</span></a>'
+          if sendvici_card in s:
+              s = s.replace(sendvici_card, '', 1)
+          sendvici_footer = '<a href="/sendvici-beograd/">Sendviči Beograd</a>'
+          if sendvici_footer in s:
+              s = s.replace(sendvici_footer, '', 1)
+
+          old_end = '<div class="mobilebar"><a href="#poruci">PORUČI</a><a href="tel:+381668459602">POZOVI</a><a target="_blank" rel="noopener" href="https://share.google/LttOaKfkoDdpvW1ZL">MAPA</a></div></body></html>'
+          new_end = '<div class="mobilebar"><a href="#poruci">PORUČI</a><a href="tel:+381668459602">POZOVI</a><a target="_blank" rel="noopener" href="https://share.google/LttOaKfkoDdpvW1ZL">MAPA</a></div><script>const mt=document.getElementById("menuToggle"),mm=document.getElementById("mobileMenu"),ct=document.getElementById("contactToggle"),cf=document.getElementById("contactFloat");mt&&mt.addEventListener("click",e=>{e.stopPropagation();const o=mm.classList.toggle("open");mt.setAttribute("aria-expanded",o)});mm&&mm.querySelectorAll("a").forEach(a=>a.addEventListener("click",()=>{mm.classList.remove("open");mt&&mt.setAttribute("aria-expanded","false")}));ct&&ct.addEventListener("click",e=>{e.stopPropagation();const o=cf.classList.toggle("open");ct.setAttribute("aria-expanded",o)});document.addEventListener("click",e=>{if(mm&&mt&&!mm.contains(e.target)&&!mt.contains(e.target)){mm.classList.remove("open");mt.setAttribute("aria-expanded","false")}if(cf&&!cf.contains(e.target)){cf.classList.remove("open");ct&&ct.setAttribute("aria-expanded","false")}});document.addEventListener("keydown",e=>{if(e.key==="Escape"){mm&&mm.classList.remove("open");mt&&mt.setAttribute("aria-expanded","false");cf&&cf.classList.remove("open");ct&&ct.setAttribute("aria-expanded","false")}});</script></body></html>'
+          rep(old_end, new_end, 'interaction script')
+
+          p.write_text(s, encoding='utf-8')
+
+          q = Path('sendvici-beograd/index.html')
+          if q.exists():
+              q.unlink()
+          PY
+
+      - name: Commit UI fixes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --check
+          git commit -m "Fix sticky header, hamburger menu and contact CTA"
+          git push

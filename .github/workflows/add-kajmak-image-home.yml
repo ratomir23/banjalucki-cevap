@@ -1,0 +1,33 @@
+name: Add kajmak pljeskavica image
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/add-kajmak-image-home.yml'
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch homepage menu
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          old='<div class="row"><span>Pljeskavica sa kajmakom<em>150 g + 40 g kajmak</em></span><strong>800 RSD</strong></div>'
+          new='<div class="row menu-product-row"><img class="menu-product-img" src="/Pljeskavica-sa-kajmakom.jpeg" alt="Pljeskavica sa kajmakom 150 g mesa i 40 g kajmaka" loading="lazy"><span>Pljeskavica sa kajmakom<em>150 g + 40 g kajmak</em></span><strong>800 RSD</strong></div>'
+          if old not in s:
+              raise SystemExit('Target pljeskavica row not found')
+          s=s.replace(old,new,1)
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Add pljeskavica with kajmak image to menu"
+          git push

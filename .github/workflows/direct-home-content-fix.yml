@@ -1,0 +1,101 @@
+name: Direct homepage content fix
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/direct-home-content-fix.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Write product images and gallery directly into HTML
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+
+          def rep(old, new, label, required=True):
+              global s
+              n = s.count(old)
+              if required and n != 1:
+                  raise SystemExit(f'{label}: expected 1 match, found {n}')
+              if n:
+                  s = s.replace(old, new, 1)
+
+          # Hero fine-tuning: stronger address + whole mobile content group 24px higher.
+          rep('.hero h1{font:900 clamp(58px,9vw,106px)/.82 Georgia,serif;letter-spacing:-.05em;text-transform:uppercase;margin:12px 0 17px;text-shadow:0 4px 28px #000}',
+              '.hero h1{font:900 clamp(58px,9vw,106px)/.82 Georgia,serif;letter-spacing:-.05em;text-transform:uppercase;margin:12px 0 17px;text-shadow:0 4px 28px #000}.hero .kicker{color:#df5a50;text-shadow:0 1px 8px #000,0 0 18px #0009}',
+              'hero address color')
+          rep('.hero-inner{padding:88px 0 36px;max-width:340px}', '.hero-inner{padding:88px 0 60px;max-width:340px}', 'mobile hero shift')
+          rep('.hero-inner{padding-bottom:32px}', '.hero-inner{padding-bottom:56px}', 'small mobile hero shift')
+
+          # Direct menu image styling in HTML/CSS, no JS dependency.
+          rep('.row{display:grid;grid-template-columns:1fr auto;gap:14px;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}',
+              '.row{display:grid;grid-template-columns:1fr auto;gap:14px;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}.menu-product-row{grid-template-columns:74px 1fr auto;align-items:center;gap:12px;padding:11px 0}.menu-product-img{width:74px;height:58px;object-fit:cover;border-radius:9px;background:#e7ddcf}',
+              'menu image css')
+          rep('.menu{grid-template-columns:1fr;gap:0}', '.menu{grid-template-columns:1fr;gap:0}.menu-product-row{grid-template-columns:68px 1fr auto}.menu-product-img{width:68px;height:54px}', 'mobile menu image css')
+
+          # Exact images in the three featured product cards.
+          patterns = [
+              (r'(<article class="product"><img src=")[^"]+(" alt="Mala porcija banjalučkih ćevapa 8 komada")', r'\1/%C4%86evapi%20150gr.jpeg\2', 'featured small cevapi'),
+              (r'(<article class="product"><img src=")[^"]+(" alt="Velika porcija banjalučkih ćevapa 16 komada")', r'\1/%C4%86evapi%20300gr.jpeg\2', 'featured large cevapi'),
+              (r'(<article class="product"><img src=")[^"]+(" alt="Pljeskavica u somunu Beograd")', r'\1/Pljeskavica%20150%20gr.jpeg\2', 'featured pljeskavica'),
+          ]
+          for pat, repl, label in patterns:
+              s2, n = re.subn(pat, repl, s, count=1)
+              if n != 1:
+                  raise SystemExit(f'{label}: expected 1 regex match, found {n}')
+              s = s2
+
+          # Menu rows: image is now part of the HTML itself.
+          rows = {
+              '<div class="row"><span>Mala porcija<em>8 kom / 150 g</em></span><strong>600 RSD</strong></div>': '<div class="row menu-product-row"><img class="menu-product-img" src="/%C4%86evapi%20150gr.jpeg" alt="Ćevapi 150 g" loading="lazy"><span>Mala porcija<em>8 kom / 150 g</em></span><strong>600 RSD</strong></div>',
+              '<div class="row"><span>Velika porcija<em>16 kom / 300 g</em></span><strong>1.200 RSD</strong></div>': '<div class="row menu-product-row"><img class="menu-product-img" src="/%C4%86evapi%20300gr.jpeg" alt="Ćevapi 300 g" loading="lazy"><span>Velika porcija<em>16 kom / 300 g</em></span><strong>1.200 RSD</strong></div>',
+              '<div class="row"><span>Pljeskavica<em>150 g</em></span><strong>600 RSD</strong></div>': '<div class="row menu-product-row"><img class="menu-product-img" src="/Pljeskavica%20150%20gr.jpeg" alt="Pljeskavica 150 g" loading="lazy"><span>Pljeskavica<em>150 g</em></span><strong>600 RSD</strong></div>',
+              '<div class="row"><span>Pileće belo u somunu<em>150 g</em></span><strong>600 RSD</strong></div>': '<div class="row menu-product-row"><img class="menu-product-img" src="/Pile%C4%87e%20belo%20150gr.jpeg" alt="Pileće belo 150 g" loading="lazy"><span>Pileće belo u somunu<em>150 g</em></span><strong>600 RSD</strong></div>',
+              '<div class="row"><span>Pileće belo u somunu<em>300 g</em></span><strong>1.200 RSD</strong></div>': '<div class="row menu-product-row"><img class="menu-product-img" src="/Pile%C4%87e%20belo%20300%20gr.jpeg" alt="Pileće belo 300 g" loading="lazy"><span>Pileće belo u somunu<em>300 g</em></span><strong>1.200 RSD</strong></div>',
+              '<div class="row"><span>Pomfrit<em>200 g</em></span><strong>350 RSD</strong></div>': '<div class="row menu-product-row"><img class="menu-product-img" src="/Pomfrit%20200gr.jpeg" alt="Pomfrit 200 g" loading="lazy"><span>Pomfrit<em>200 g</em></span><strong>350 RSD</strong></div>',
+              '<div class="row"><span>Kajmak</span><strong>180 RSD</strong></div>': '<div class="row menu-product-row"><img class="menu-product-img" src="/Kugla%20kajmaka.jpeg" alt="Kugla kajmaka" loading="lazy"><span>Kajmak</span><strong>180 RSD</strong></div>',
+              '<div class="row"><span>Ljuta paprika</span><strong>170 RSD</strong></div>': '<div class="row menu-product-row"><img class="menu-product-img" src="/Ljute%20paprike%20100gr.jpeg" alt="Ljute paprike 100 g" loading="lazy"><span>Ljuta paprika</span><strong>170 RSD</strong></div>',
+          }
+          for old, new in rows.items():
+              rep(old, new, 'menu row')
+
+          # Gallery: remove storefront entirely and fill with exact new product photos.
+          old_gallery = '<div class="gallery"><div class="gallery-main"><div class="gallery-item"><img src="IMG-20260912-WA0012.jpg" alt="Banjalučki ćevapi i roštilj ponuda Beograd" loading="lazy"></div><div class="gallery-item"><img src="IMG-20260912-WA0014.jpg" alt="Banjalučki Ćevap Nemanjina 5 Beograd lokal" loading="lazy"></div></div><div class="gallery-side"><div class="gallery-item"><img src="IMG-20260912-WA0000.jpg" alt="Pljeskavica u somunu Beograd" loading="lazy"></div><div class="gallery-item"><img src="IMG-20260912-WA0011.jpg" alt="Pileće belo meso u somunu Beograd" loading="lazy"></div></div></div>'
+          new_gallery = '<div class="gallery gallery-new"><div class="gallery-item"><img src="/%C4%86evapi%20150gr.jpeg" alt="Banjalučki ćevapi 150 g" loading="lazy"></div><div class="gallery-item"><img src="/%C4%86evapi%20300gr.jpeg" alt="Banjalučki ćevapi 300 g" loading="lazy"></div><div class="gallery-item"><img src="/Pljeskavica%20150%20gr.jpeg" alt="Pljeskavica 150 g" loading="lazy"></div><div class="gallery-item"><img src="/Pile%C4%87e%20belo%20150gr.jpeg" alt="Pileće belo 150 g" loading="lazy"></div><div class="gallery-item"><img src="/Pile%C4%87e%20belo%20300%20gr.jpeg" alt="Pileće belo 300 g" loading="lazy"></div><div class="gallery-item"><img src="/Pomfrit%20200gr.jpeg" alt="Pomfrit 200 g" loading="lazy"></div><div class="gallery-item"><img src="/Kugla%20kajmaka.jpeg" alt="Kugla kajmaka" loading="lazy"></div><div class="gallery-item"><img src="/Ljute%20paprike%20100gr.jpeg" alt="Ljute paprike 100 g" loading="lazy"></div></div>'
+          rep(old_gallery, new_gallery, 'gallery markup')
+
+          rep('.gallery-item img{height:100%;object-fit:cover}',
+              '.gallery-item img{height:100%;object-fit:cover}.gallery.gallery-new{grid-template-columns:repeat(4,1fr);gap:10px}.gallery.gallery-new .gallery-item{height:220px}.gallery.gallery-new .gallery-item:nth-child(1),.gallery.gallery-new .gallery-item:nth-child(2){grid-column:span 2;height:300px}',
+              'gallery desktop css')
+          rep('.gallery-main,.gallery-side{grid-template-columns:1fr 1fr;grid-template-rows:none}',
+              '.gallery-main,.gallery-side{grid-template-columns:1fr 1fr;grid-template-rows:none}.gallery.gallery-new{grid-template-columns:repeat(2,1fr)}.gallery.gallery-new .gallery-item{height:185px}.gallery.gallery-new .gallery-item:nth-child(1),.gallery.gallery-new .gallery-item:nth-child(2){grid-column:span 2;height:245px}',
+              'gallery mobile css')
+          rep('.gallery-main,.gallery-side{grid-template-columns:1fr}.gallery-main .gallery-item:first-child{grid-column:auto;height:215px}.gallery-item{height:195px}',
+              '.gallery-main,.gallery-side{grid-template-columns:1fr}.gallery-main .gallery-item:first-child{grid-column:auto;height:215px}.gallery-item{height:195px}.gallery.gallery-new{grid-template-columns:1fr}.gallery.gallery-new .gallery-item,.gallery.gallery-new .gallery-item:nth-child(1),.gallery.gallery-new .gallery-item:nth-child(2){grid-column:auto;height:210px}',
+              'gallery small mobile css')
+
+          p.write_text(s, encoding='utf-8')
+          PY
+
+      - name: Commit direct HTML changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --check
+          git commit -m "Write exact product images and gallery directly into homepage HTML"
+          git push

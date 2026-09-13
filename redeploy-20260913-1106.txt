@@ -1,0 +1,1 @@
+Trigger Vercel redeploy after restoring the correct index.html.

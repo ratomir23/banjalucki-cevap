@@ -1,0 +1,67 @@
+name: Add drinks menu
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/add-drinks-menu.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Replace drinks section directly in homepage HTML
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from urllib.parse import quote
+
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+
+          old = '<div class="cat" id="pice"><h3>Piće</h3><div class="row"><span>Izbor bezalkoholnih pića</span><strong>pogledaj platformu</strong></div><div class="row"><span>Topli napici</span><strong>pogledaj platformu</strong></div></div>'
+
+          items = [
+            ('Ultra Energy Original 0,5 l', None, '200 RSD'),
+            ('Kisela voda 0,5 l', 'Kisela voda 0,5 l.jpeg', '160 RSD'),
+            ('Rosa voda 0,5 l', 'Rosa voda 0,5 l.jpeg', '160 RSD'),
+            ('Coca-Cola 0,5 l', 'Coca-Cola 0,5 l.jpeg', '200 RSD'),
+            ('Fanta 0,5 l', 'Fanta 0,5 l.jpeg', '200 RSD'),
+            ('Sprite 0,5 l', 'Sprite 0,5 l.jpeg', '200 RSD'),
+            ('Schweppes 0,5 l', 'Schweppes 0,5 l.jpeg', '200 RSD'),
+            ('Coca-Cola Zero 0,5 l', 'Coca-Cola Zero 0,5 l.jpeg', '200 RSD'),
+            ('Fuzetea Breskva 0,5 l', 'Fuzetea Breskva 0,5 l.jpeg', '240 RSD'),
+            ('Fuzetea Šumsko voće 0,5 l', 'Fuzetea Šumsko voće 0,5 l.jpeg', '240 RSD'),
+          ]
+
+          rows=[]
+          for name, fn, price in items:
+              if fn:
+                  src='/' + quote(fn)
+                  rows.append(f'<div class="row menu-product-row"><img class="menu-product-img" src="{src}" alt="{name}" loading="lazy"><span>{name}</span><strong>{price}</strong></div>')
+              else:
+                  rows.append(f'<div class="row"><span>{name}</span><strong>{price}</strong></div>')
+
+          new = '<div class="cat" id="pice"><h3>Piće</h3>' + ''.join(rows) + '</div>'
+
+          if old not in s:
+              raise SystemExit('Old drinks block not found exactly; refusing unsafe replacement')
+          s = s.replace(old, new, 1)
+          p.write_text(s, encoding='utf-8')
+          PY
+
+      - name: Commit drinks menu
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --check
+          git commit -m "Add exact drinks menu with product images and prices"
+          git push

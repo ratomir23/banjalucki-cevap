@@ -1,0 +1,1 @@
+(function(){var l=document.createElement('link');l.rel='stylesheet';l.href='/location-pricing.css';document.head.appendChild(l);var s=document.createElement('script');s.src='/location-pricing.js';s.defer=true;document.head.appendChild(s);})();

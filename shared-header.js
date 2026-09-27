@@ -1,8 +1,8 @@
 (()=>{
 const root=document.getElementById('sharedHeader');if(!root)return;
 const IG='https://www.instagram.com/banjalucki_cevap_nemanjina_?stkn=YmVqdWthbmd3eWJj';
-const MAP_NEM='https://www.google.com/maps/dir/?api=1&destination=Nemanjina+5%2C+Beograd%2C+Srbija';
-const MAP_1974='https://www.google.com/maps/dir/?api=1&destination=Bulevar+Mar%C5%A1ala+Tolbuhina+27%2C+Novi+Beograd%2C+Beograd%2C+Srbija';
+const MAP_NEM='https://www.google.com/maps/dir/?api=1&destination=Banjalu%C4%8Dki+%C4%87evap%2C+Nemanjina+5a%2C+Beograd&destination_place_id=ChIJqyAIYAB7WkcRD796pO8E3ws';
+const MAP_1974='https://www.google.com/maps/dir/?api=1&destination=Banjalu%C4%8Dki+%C4%86evap+1974%2C+Bulevar+Mar%C5%A1ala+Tolbuhina+27&destination_place_id=0x475a6506202b450f%3A0x6d30cdc0a4950447';
 const is1974=location.pathname.startsWith('/banjalucki-cevap-1974');
 const isNem=location.pathname.startsWith('/nemanjina-5');
 const phone=is1974?'+381621257330':'+381668459602';

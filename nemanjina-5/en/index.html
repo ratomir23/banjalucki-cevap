@@ -42,6 +42,13 @@ h1{font:900 clamp(38px,8vw,66px)/.98 Georgia,serif;letter-spacing:-.04em;margin:
 .btn.gold{background:var(--gold);color:#17130f}
 .btn.dark{background:#171511;color:#f3eee4}
 @media(max-width:520px){.top-inner{min-height:66px}.hero{padding:40px 16px 30px}.wrap{border-radius:12px}.menu-head,.category{padding-left:16px;padding-right:16px}.category h2{font-size:23px}.items li{grid-template-columns:28px minmax(0,1fr) auto;gap:8px;padding:11px 0}.items li::before{width:24px;height:24px}.name{font-size:14px}.price{font-size:13px}}
+
+/* Product photography matches the corresponding Serbian menu items. */
+.items li.has-image{grid-template-columns:32px 70px minmax(0,1fr) auto;gap:10px}
+.item-img{display:block;width:70px;height:58px;object-fit:cover;border-radius:9px;background:#e7ddcf}
+.item-img.drink{object-fit:contain;padding:3px;background:#faf7f1}
+@media(max-width:520px){.items li.has-image{grid-template-columns:26px 58px minmax(0,1fr) auto;gap:8px}.item-img{width:58px;height:54px}}
+@media(max-width:380px){.items li.has-image{grid-template-columns:24px 52px minmax(0,1fr) auto;gap:6px}.item-img{width:52px;height:50px}.items li.has-image .price{font-size:12px}}
 </style>
 </head>
 <body>
@@ -50,36 +57,36 @@ h1{font:900 clamp(38px,8vw,66px)/.98 Georgia,serif;letter-spacing:-.04em;margin:
 <main class="wrap">
 <div class="menu-head"><strong>In-store menu · Nemanjina 5</strong><p>Prices are in Serbian dinars (RSD). Prices at this location may differ from the Banjalučki Ćevap 1974 location and from delivery-platform prices.</p></div>
 <section class="category"><h2>Grill</h2><ol class="items">
-<li><span class="number" aria-hidden="true"></span><span class="name">Ćevapi in flatbread<span class="detail">16 pieces · 400 g</span></span><span class="price">980 RSD</span></li>
-<li><span class="number" aria-hidden="true"></span><span class="name">Ćevapi in flatbread<span class="detail">8 pieces · 200 g</span></span><span class="price">490 RSD</span></li>
-<li><span class="number" aria-hidden="true"></span><span class="name">Pljeskavica in flatbread<span class="detail">Serbian-style grilled meat patty · 200 g</span></span><span class="price">490 RSD</span></li>
+<li class="has-image"><span class="number" aria-hidden="true"></span><img class="item-img" src="/%C4%86evapi%20300gr.jpeg" alt="" loading="lazy" decoding="async" width="70" height="58"><span class="name">Ćevapi in flatbread<span class="detail">16 pieces · 400 g</span></span><span class="price">980 RSD</span></li>
+<li class="has-image"><span class="number" aria-hidden="true"></span><img class="item-img" src="/%C4%86evapi%20150gr.jpeg" alt="" loading="lazy" decoding="async" width="70" height="58"><span class="name">Ćevapi in flatbread<span class="detail">8 pieces · 200 g</span></span><span class="price">490 RSD</span></li>
+<li class="has-image"><span class="number" aria-hidden="true"></span><img class="item-img" src="/Pljeskavica%20150%20gr.jpeg" alt="" loading="lazy" decoding="async" width="70" height="58"><span class="name">Pljeskavica in flatbread<span class="detail">Serbian-style grilled meat patty · 200 g</span></span><span class="price">490 RSD</span></li>
 <li><span class="number" aria-hidden="true"></span><span class="name">Gourmet Serbian-style grilled meat patty<span class="detail">Gourmet pljeskavica · 300 g</span></span><span class="price">650 RSD</span></li>
-<li><span class="number" aria-hidden="true"></span><span class="name">Pljeskavica with kajmak<span class="detail">Traditional creamy dairy spread · 250 g</span></span><span class="price">600 RSD</span></li>
+<li class="has-image"><span class="number" aria-hidden="true"></span><img class="item-img" src="/Pljeskavica-sa-kajmakom.jpeg" alt="" loading="lazy" decoding="async" width="70" height="58"><span class="name">Pljeskavica with kajmak<span class="detail">Traditional creamy dairy spread · 250 g</span></span><span class="price">600 RSD</span></li>
 <li><span class="number" aria-hidden="true"></span><span class="name">Pljeskavica with kashkaval cheese<span class="detail">250 g</span></span><span class="price">600 RSD</span></li>
-<li><span class="number" aria-hidden="true"></span><span class="name">Chicken fillet in flatbread<span class="detail">200 g</span></span><span class="price">490 RSD</span></li>
-<li><span class="number" aria-hidden="true"></span><span class="name">Chicken fillet in flatbread<span class="detail">400 g</span></span><span class="price">980 RSD</span></li>
-<li><span class="number" aria-hidden="true"></span><span class="name">French fries<span class="detail">200 g</span></span><span class="price">300 RSD</span></li>
-<li><span class="number" aria-hidden="true"></span><span class="name">Grilled hot pepper</span><span class="price">120 RSD</span></li>
-<li><span class="number" aria-hidden="true"></span><span class="name">Kajmak add-on<span class="detail">One scoop</span></span><span class="price">130 RSD</span></li>
+<li class="has-image"><span class="number" aria-hidden="true"></span><img class="item-img" src="/Pile%C4%87e%20belo%20150gr.jpeg" alt="" loading="lazy" decoding="async" width="70" height="58"><span class="name">Chicken fillet in flatbread<span class="detail">200 g</span></span><span class="price">490 RSD</span></li>
+<li class="has-image"><span class="number" aria-hidden="true"></span><img class="item-img" src="/Pile%C4%87e%20belo%20300%20gr.jpeg" alt="" loading="lazy" decoding="async" width="70" height="58"><span class="name">Chicken fillet in flatbread<span class="detail">400 g</span></span><span class="price">980 RSD</span></li>
+<li class="has-image"><span class="number" aria-hidden="true"></span><img class="item-img" src="/Pomfrit%20200gr.jpeg" alt="" loading="lazy" decoding="async" width="70" height="58"><span class="name">French fries<span class="detail">200 g</span></span><span class="price">300 RSD</span></li>
+<li class="has-image"><span class="number" aria-hidden="true"></span><img class="item-img" src="/Ljute%20paprike%20100gr.jpeg" alt="" loading="lazy" decoding="async" width="70" height="58"><span class="name">Grilled hot pepper</span><span class="price">120 RSD</span></li>
+<li class="has-image"><span class="number" aria-hidden="true"></span><img class="item-img" src="/Kugla%20kajmaka.jpeg" alt="" loading="lazy" decoding="async" width="70" height="58"><span class="name">Kajmak add-on<span class="detail">One scoop</span></span><span class="price">130 RSD</span></li>
 </ol></section>
 <section class="category"><h2>Cold Drinks</h2><ol class="items">
-<li><span class="number" aria-hidden="true"></span><span class="name">Coca-Cola<span class="detail">0.5 L</span></span><span class="price">150 RSD</span></li>
+<li class="has-image"><span class="number" aria-hidden="true"></span><img class="item-img drink" src="/Coca-Cola%200,5%20l.jpeg" alt="" loading="lazy" decoding="async" width="70" height="58"><span class="name">Coca-Cola<span class="detail">0.5 L</span></span><span class="price">150 RSD</span></li>
 <li><span class="number" aria-hidden="true"></span><span class="name">Coca-Cola<span class="detail">0.33 L</span></span><span class="price">150 RSD</span></li>
-<li><span class="number" aria-hidden="true"></span><span class="name">Coca-Cola Zero<span class="detail">0.5 L</span></span><span class="price">150 RSD</span></li>
+<li class="has-image"><span class="number" aria-hidden="true"></span><img class="item-img drink" src="/Coca-Cola%20Zero%200,5%20l.jpeg" alt="" loading="lazy" decoding="async" width="70" height="58"><span class="name">Coca-Cola Zero<span class="detail">0.5 L</span></span><span class="price">150 RSD</span></li>
 <li><span class="number" aria-hidden="true"></span><span class="name">Coca-Cola Zero<span class="detail">0.33 L</span></span><span class="price">150 RSD</span></li>
-<li><span class="number" aria-hidden="true"></span><span class="name">Schweppes<span class="detail">0.5 L</span></span><span class="price">150 RSD</span></li>
+<li class="has-image"><span class="number" aria-hidden="true"></span><img class="item-img drink" src="/Schweppes%200,5%20l.jpeg" alt="" loading="lazy" decoding="async" width="70" height="58"><span class="name">Schweppes<span class="detail">0.5 L</span></span><span class="price">150 RSD</span></li>
 <li><span class="number" aria-hidden="true"></span><span class="name">Schweppes<span class="detail">0.33 L</span></span><span class="price">150 RSD</span></li>
-<li><span class="number" aria-hidden="true"></span><span class="name">Fanta<span class="detail">0.5 L</span></span><span class="price">150 RSD</span></li>
+<li class="has-image"><span class="number" aria-hidden="true"></span><img class="item-img drink" src="/Fanta%200,5%20l.jpeg" alt="" loading="lazy" decoding="async" width="70" height="58"><span class="name">Fanta<span class="detail">0.5 L</span></span><span class="price">150 RSD</span></li>
 <li><span class="number" aria-hidden="true"></span><span class="name">Fanta<span class="detail">0.33 L</span></span><span class="price">150 RSD</span></li>
-<li><span class="number" aria-hidden="true"></span><span class="name">Sprite<span class="detail">0.5 L</span></span><span class="price">150 RSD</span></li>
+<li class="has-image"><span class="number" aria-hidden="true"></span><img class="item-img drink" src="/Sprite%200,5%20l.jpeg" alt="" loading="lazy" decoding="async" width="70" height="58"><span class="name">Sprite<span class="detail">0.5 L</span></span><span class="price">150 RSD</span></li>
 <li><span class="number" aria-hidden="true"></span><span class="name">Sprite<span class="detail">0.33 L</span></span><span class="price">150 RSD</span></li>
 <li><span class="number" aria-hidden="true"></span><span class="name">Ultra Energy<span class="detail">0.25 L</span></span><span class="price">180 RSD</span></li>
 <li><span class="number" aria-hidden="true"></span><span class="name">Ultra Energy Orange<span class="detail">0.25 L</span></span><span class="price">150 RSD</span></li>
-<li><span class="number" aria-hidden="true"></span><span class="name">Fuze Tea Peach<span class="detail">0.5 L</span></span><span class="price">150 RSD</span></li>
-<li><span class="number" aria-hidden="true"></span><span class="name">Fuze Tea Forest Fruits<span class="detail">0.5 L</span></span><span class="price">150 RSD</span></li>
+<li class="has-image"><span class="number" aria-hidden="true"></span><img class="item-img drink" src="/Fuzetea%20Breskva%200,5%20l.jpeg" alt="" loading="lazy" decoding="async" width="70" height="58"><span class="name">Fuze Tea Peach<span class="detail">0.5 L</span></span><span class="price">150 RSD</span></li>
+<li class="has-image"><span class="number" aria-hidden="true"></span><img class="item-img drink" src="/Fuzetea%20%C5%A0umsko%20vo%C4%87e%200,5%20l.jpeg" alt="" loading="lazy" decoding="async" width="70" height="58"><span class="name">Fuze Tea Forest Fruits<span class="detail">0.5 L</span></span><span class="price">150 RSD</span></li>
 <li><span class="number" aria-hidden="true"></span><span class="name">Fuze Tea Lemon<span class="detail">0.5 L</span></span><span class="price">150 RSD</span></li>
-<li><span class="number" aria-hidden="true"></span><span class="name">Rosa Still Water<span class="detail">0.5 L</span></span><span class="price">120 RSD</span></li>
-<li><span class="number" aria-hidden="true"></span><span class="name">Rosa Sparkling Water<span class="detail">0.5 L</span></span><span class="price">120 RSD</span></li>
+<li class="has-image"><span class="number" aria-hidden="true"></span><img class="item-img drink" src="/Rosa%20voda%200,5%20l.jpeg" alt="" loading="lazy" decoding="async" width="70" height="58"><span class="name">Rosa Still Water<span class="detail">0.5 L</span></span><span class="price">120 RSD</span></li>
+<li class="has-image"><span class="number" aria-hidden="true"></span><img class="item-img drink" src="/Kisela%20voda%200,5%20l.jpeg" alt="" loading="lazy" decoding="async" width="70" height="58"><span class="name">Rosa Sparkling Water<span class="detail">0.5 L</span></span><span class="price">120 RSD</span></li>
 <li><span class="number" aria-hidden="true"></span><span class="name">Lemonade<span class="detail">0.2 L</span></span><span class="price">130 RSD</span></li>
 <li><span class="number" aria-hidden="true"></span><span class="name">Blueberry drink<span class="detail">0.2 L</span></span><span class="price">130 RSD</span></li>
 </ol></section>

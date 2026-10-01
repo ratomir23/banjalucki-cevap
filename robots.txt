@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://banjalucki-cevap.vercel.app/sitemap.xml
+Sitemap: https://www.banjalucki-cevap.rs/sitemap.xml
